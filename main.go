@@ -60,7 +60,7 @@ type PostBody struct {
 
 var store = sessions.NewCookieStore([]byte("secret"))
 
-func main() {
+func Handler() {
 	r := gin.Default()
 
 	db := connectToDb()
