@@ -11,7 +11,7 @@ import (
 )
 
 func connectToDb() *gorm.DB {
-	db, err := gorm.Open(postgres.Open("host=localhost user=postgres password=2011 dbname=bacgram port=5432"), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open("postgresql://baclearn_owner:6HkoqxnmWNa5@ep-bold-scene-a5tudpps-pooler.us-east-2.aws.neon.tech/baclearn?sslmode=require"), &gorm.Config{})
 
 	if err != nil {
 		panic(err.Error())
@@ -65,7 +65,10 @@ func main() {
 
 	db := connectToDb()
 
-	db.AutoMigrate(&User{}, &Post{})
+	err := db.AutoMigrate(&User{}, &Post{})
+	if err != nil {
+		return
+	}
 
 	r.POST("/api/signup", func(c *gin.Context) {
 		var body UserBody
@@ -100,7 +103,10 @@ func main() {
 		session.Values["username"] = body.Username
 		session.Values["id"] = user.ID
 
-		session.Save(c.Request, c.Writer)
+		err := session.Save(c.Request, c.Writer)
+		if err != nil {
+			return
+		}
 
 		c.JSON(200, gin.H{
 			"message": "User created successfully",
@@ -140,7 +146,10 @@ func main() {
 		session.Values["username"] = body.Username
 		session.Values["id"] = user.ID
 
-		session.Save(c.Request, c.Writer)
+		err := session.Save(c.Request, c.Writer)
+		if err != nil {
+			return
+		}
 
 		c.JSON(200, gin.H{
 			"message": "User logged in successfully",
@@ -239,5 +248,8 @@ func main() {
 			"posts": posts,
 		})
 	})
-	r.Run()
+	errR := r.Run()
+	if errR != nil {
+		return
+	}
 }
