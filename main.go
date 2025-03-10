@@ -248,8 +248,4 @@ func Handler() {
 			"posts": posts,
 		})
 	})
-	errR := r.Run()
-	if errR != nil {
-		return
-	}
 }
